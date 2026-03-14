@@ -39,9 +39,12 @@ def misfit_residual(p, observed_periods, observed_velocity, mode):
     """
     Compute the residual (without gradient) for the objective function.
     """
-    model_velocity = forward_disp(p, observed_periods, mode)
-    residual = observed_velocity - model_velocity
-    return np.sum(residual**2)  # Sum of squared residuals
+    try:
+        model_velocity = forward_disp(p, observed_periods, mode)
+        residual = observed_velocity - model_velocity
+        return np.sum(residual**2)  # Sum of squared residuals
+    except Exception as e:
+        return np.inf
 
 
 def compute_gradient(p, observed_periods, observed_velocity, mode):
