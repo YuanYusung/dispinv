@@ -55,8 +55,6 @@ pip install numpy scipy matplotlib emcee disba
 
 ## Quick example
 
-This project depends on:
-
 ```python
 from MCMC_inversion import run_mcmc
 import numpy as np
