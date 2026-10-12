@@ -77,6 +77,8 @@ class TestJointRecovery(unittest.TestCase):
             lambda_gamma=0.0, lambda_smooth=0.0, lambda_vs=0.0,
             maxiter=70, scan_points=60
         )
+        print("Recovered Vsv:", model["vsv_km_s"], "true:", vtrue)
+        print("Recovered gamma:", model["gamma"], "true:", gtrue)
         np.testing.assert_allclose(model["rayleigh_pred"], rayleigh, atol=0.004)
         np.testing.assert_allclose(model["love_pred"], love, atol=0.004)
         self.assertLess(np.max(abs(model["vsv_km_s"] - vtrue)), 0.10)
