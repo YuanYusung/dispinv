@@ -182,7 +182,7 @@ def invert_joint_bfgs(period_r, c_r, sigma_r, period_l, c_l, sigma_l,
         return float(data+reg)
 
     result = minimize(objective, z0, method="BFGS", jac="3-point",
-                      options={"maxiter":maxiter, "gtol":1e-3, "disp":True,
+                      options={"maxiter":maxiter, "gtol":1e-2, "xrtol":1e-5, "disp":True,
                                "finite_diff_rel_step":fd_step})
     vsv, gamma = decode(result.x)
     model = {
