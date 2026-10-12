@@ -26,6 +26,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_joint_vti.py' -v
       - name: Run the standalone synthetic inversion demo
         run: python BFGS_joint_VTI.py --demo --output-dir test_demo_vti --maxiter 70 --scan-points 60
+      - name: Repeat standalone demo for convergence stability
+        run: python BFGS_joint_VTI.py --demo --output-dir test_demo_vti_repeat --maxiter 70 --scan-points 60
       - name: Inspect demo fit
         run: |
           python - <<'PY'
@@ -34,6 +36,8 @@ jobs:
           d = json.loads(Path("test_demo_vti/summary.json").read_text())
           print(json.dumps(d, indent=2))
           assert d["success"], d
+          d2 = json.loads(Path("test_demo_vti_repeat/summary.json").read_text())
+          assert d2["success"], d2
           assert Path("test_demo_vti/joint_inversion.png").is_file()
           assert d["rayleigh_rmse_km_s"] < 0.005, d
           assert d["love_rmse_km_s"] < 0.005, d
