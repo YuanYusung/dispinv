@@ -88,3 +88,33 @@ See demo.ipynb for a more complete example with plotting.
 - MCMC results should generally be interpreted with burn-in removal and convergence checks in real applications
 
 
+
+## Joint fundamental Rayleigh + Love inversion (restricted VTI)
+
+Run `BFGS_joint_VTI.py` to invert layered **Vsv** and **radial anisotropy** with BFGS. Original isotropic scripts remain unchanged.
+
+Parameters: `gamma = Vsh/Vsv - 1`; the output also includes `xi = (Vsh/Vsv)^2 = (1+gamma)^2`. **Finite layer thickness, density and Vp/Vsv are fixed.** The VTI constants are `A=C=rho*Vp^2`, `F=A-2L`, `L=rho*Vsv^2`, `N=rho*Vsh^2`. Rayleigh uses the isotropic P-SV subsystem via `disba`, while Love solves the VTI SH equation with both L and N. This is a **restricted VTI**, not general five-constant VTI.
+
+Generate and invert synthetic curves:
+
+```bash
+python BFGS_joint_VTI.py --demo --output-dir demo_vti
+```
+
+Input observation CSVs need `period_s,c_km_s,sigma_km_s` columns, or `frequency_hz` instead of `period_s`. Uncertainty is optional. Periods for Rayleigh and Love may differ. Initial model CSV columns: `thickness_km,vsv_km_s,rho_g_cm3,gamma_init` (last row is the half-space with thickness zero).
+
+```bash
+python BFGS_joint_VTI.py --rayleigh rayleigh.csv --love love.csv \
+  --model initial_model.csv --output-dir results \
+  --gamma-min -0.15 --gamma-max 0.15 --maxiter 150
+```
+
+Check `results/summary.json` for an actual `success: true` convergence status. Other outputs: `inverted_model.csv`, `rayleigh_fit.csv`, `love_fit.csv`, and `joint_inversion.png`.
+
+Regression test:
+
+```bash
+python -m unittest discover -s tests -p 'test_joint_vti.py' -v
+```
+
+**Limitations:** A good two-curve fit does not prove uniqueness of Vs and gamma, especially at depth. Fixed layer geometry, Vp/Vsv, regularization and azimuthal structure require sensitivity analysis before interpretation. This model cannot resolve general VTI P anisotropy or HTI fracture effects.
