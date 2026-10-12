@@ -3,6 +3,7 @@ name: Validate joint Rayleigh-Love VTI inversion
 on:
   push:
     branches:
+      - main
       - feature/bfgs-rayleigh-love-vti
   pull_request:
     paths:
@@ -32,6 +33,7 @@ jobs:
           from pathlib import Path
           d = json.loads(Path("test_demo_vti/summary.json").read_text())
           print(json.dumps(d, indent=2))
-          assert d["rayleigh_rmse_km_s"] < 0.03, d
-          assert d["love_rmse_km_s"] < 0.03, d
+          assert d["success"], d
+          assert d["rayleigh_rmse_km_s"] < 0.005, d
+          assert d["love_rmse_km_s"] < 0.005, d
           PY
