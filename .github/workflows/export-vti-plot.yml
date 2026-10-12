@@ -1,0 +1,29 @@
+name: Export VTI synthetic inversion figure
+on:
+  push:
+    branches:
+      - demo/visualize-vti-inversion
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install numpy scipy disba matplotlib
+      - name: Generate joint Rayleigh and Love inversion figure
+        run: python BFGS_joint_VTI.py --demo --output-dir demo_vti
+      - name: Confirm outputs
+        run: |
+          test -s demo_vti/joint_inversion.png
+          cat demo_vti/summary.json
+      - name: Export PNG and CSV results
+        uses: actions/upload-artifact@v4
+        with:
+          name: vti-joint-inversion-output
+          path: demo_vti/
+          retention-days: 14
+          if-no-files-found: error
