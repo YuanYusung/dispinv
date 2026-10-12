@@ -135,7 +135,7 @@ def invert_joint_bfgs(period_r, c_r, sigma_r, period_l, c_l, sigma_l,
                       thickness, vsv0, gamma0, rho, vpvs=2.,
                       vs_bounds=(.1, 3.5), gamma_bounds=(-.15, .15),
                       lambda_gamma=.01, lambda_smooth=.03, lambda_vs=.01,
-                      maxiter=150, fd_step=1e-5, scan_points=80):
+                      maxiter=150, fd_step=1e-3, scan_points=80):
     """Jointly invert Vsv and gamma with smooth bounds and true BFGS."""
     h, vsv0, gamma0, rho = validate_model(thickness, vsv0, gamma0, rho)
     pr, cr, sr, pl, cl, sl = map(lambda a: np.asarray(a, dtype=float),
@@ -182,7 +182,7 @@ def invert_joint_bfgs(period_r, c_r, sigma_r, period_l, c_l, sigma_l,
         return float(data+reg)
 
     result = minimize(objective, z0, method="BFGS", jac="3-point",
-                      options={"maxiter":maxiter, "gtol":1e-5, "disp":True,
+                      options={"maxiter":maxiter, "gtol":1e-3, "disp":True,
                                "finite_diff_rel_step":fd_step})
     vsv, gamma = decode(result.x)
     model = {
@@ -296,7 +296,7 @@ def main():
     parser.add_argument("--lambda-smooth", type=float, default=.03)
     parser.add_argument("--lambda-vs", type=float, default=.01)
     parser.add_argument("--maxiter", type=int, default=150)
-    parser.add_argument("--fd-step", type=float, default=1e-5)
+    parser.add_argument("--fd-step", type=float, default=1e-3)
     parser.add_argument("--scan-points", type=int, default=80)
     parser.add_argument("--no-plot", action="store_true")
     args=parser.parse_args()
